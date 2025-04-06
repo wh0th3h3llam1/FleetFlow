@@ -25,6 +25,10 @@
             "depth": 4,
             "includeAllSymbols": true
         },
+        {
+            "name": "django_lifecycle",
+            "depth": 4,
+        },
     ],
     "python.analysis.autoImportCompletions": true,
     "python.analysis.indexing": true,

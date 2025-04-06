@@ -1,0 +1,27 @@
+from uuid import uuid4
+from django.conf import settings
+from django.contrib.auth.models import Permission
+
+from common.constants import SystemRoles
+
+
+def create_system_roles():
+
+    from users.models import Role
+
+    all_permissions = Permission.objects.select_related("content_type").filter(
+        content_type__app_label__in=settings.LOCAL_APPS
+    )
+    sys_admin, _ = Role.objects.get_or_create(
+        role_name=SystemRoles.SYS_ADMIN, is_system_defined=True
+    )
+    _ = [sys_admin.permissions.add(perm) for perm in all_permissions]
+
+    driver, _ = Role.objects.get_or_create(role_name=SystemRoles.DRIVER, is_system_defined=True)
+
+
+def get_profile_image_path(instance, filename, **kwargs) -> str:
+    ext = filename.split(".")[-1]
+    filename = "%s.%s" % (uuid4(), ext)
+    file_path = f"users/profile/{instance.username}_{filename}"
+    return file_path
