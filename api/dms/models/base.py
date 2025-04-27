@@ -1,13 +1,8 @@
 from django.contrib.gis.db import models
 from django.utils import timezone
-from django.utils.text import slugify
 
-
-from django_lifecycle import AFTER_CREATE, BEFORE_CREATE, BEFORE_UPDATE, hook
-from django_lifecycle.conditions import WhenFieldHasChanged
-
-from common.choices import PROJECT_STATUS_CHOICES
-from common.constants import FieldConstants, ProjectStatus
+from common.choices import PROJECT_STATUS_CHOICES, STATUS_CATEGORY_CHOICES
+from common.constants import ProjectStatus
 from core.models import BaseModel
 from users.models import User
 
@@ -60,12 +55,8 @@ class Project(BaseModel):
 
 
 class ProjectUser(BaseModel):
-    user = models.ForeignKey(
-        to=User, related_name="user_projects", on_delete=models.CASCADE, verbose_name="User"
-    )
-    project = models.ForeignKey(
-        to=Project, related_name="project_users", on_delete=models.CASCADE, verbose_name="Project"
-    )
+    user = models.ForeignKey(to=User, related_name="projects", on_delete=models.CASCADE)
+    project = models.ForeignKey(to=Project, related_name="users", on_delete=models.CASCADE)
     assigned_by = models.ForeignKey(
         to=User,
         related_name="project_assigned_to",
@@ -78,7 +69,11 @@ class ProjectUser(BaseModel):
         return f"{self.user.full_name} - {self.project.project_id}"
 
     class Meta:
-        verbose_name_plural = "ProjectUsers"
+        verbose_name = "Project User"
+        verbose_name_plural = "Project Users"
+        constraints = [
+            models.UniqueConstraint(fields=("user", "project"), name="user_project_unique")
+        ]
 
 
 class Zone(models.Model):
@@ -109,3 +104,26 @@ class Zone(models.Model):
 
     def __str__(self) -> str:
         return f"{self.zone_name}"
+
+
+class StatusKeyword(BaseModel):
+    status_category = models.CharField(
+        verbose_name="Category", max_length=15, choices=STATUS_CATEGORY_CHOICES
+    )
+    # synonym for the status
+    name = models.CharField(verbose_name="Status", max_length=50, unique=True)
+    # original status keyword
+    keyword = models.CharField(verbose_name="Keyword", max_length=100)
+    description = models.CharField(
+        verbose_name="Description", max_length=100, blank=True, null=True
+    )
+    added_by = models.ForeignKey(
+        to=User, related_name="status_keywords", on_delete=models.SET_NULL, blank=True, null=True
+    )
+
+    class Meta:
+        verbose_name = "Status Keyword"
+        verbose_name_plural = "Status Keywords"
+
+    def __str__(self):
+        return "{} - {}".format(self.name, self.status_category)
