@@ -7,7 +7,7 @@ from drf_extra_fields.geo_fields import PointField
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from core.models import DashUser, StatusKeyword
+from core.models import User, StatusKeyword
 from core.models import Notification, UserNotification
 from dms.models import (Driver, Trip, Order, OrderItem,
                         OrderAttachment, DriverExpense, Vehicle, VehicleDocument, DriverDocument,
@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
-        model = DashUser
+        model = User
         fields = ("username", "password", "contact_number",
                   "email", "profile_image")
 
@@ -52,7 +52,7 @@ class DriverAppSerializer(serializers.ModelSerializer):
         added_by = self.context.get("request").user
         if user_data:
             password = user_data.pop("password")
-            user = DashUser.objects.create(**user_data)
+            user = User.objects.create(**user_data)
             user.set_password(password)
             validated_data["user"] = user
         validated_data["added_by"] = added_by
@@ -62,7 +62,7 @@ class DriverAppSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop("user", None)
         added_by = self.context.get("request").user
         if user_data:
-            user = DashUser.objects.filter(id=obj.user.id)
+            user = User.objects.filter(id=obj.user.id)
             password = user_data.pop("password")
             user.update(**user_data)
             user.first().set_password(password)
