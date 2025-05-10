@@ -1,0 +1,465 @@
+@import "./variables.scss";
+
+html {
+  overflow-y: auto !important;
+}
+
+@each $cp in $content-positions {
+  @each $name, $c in map-merge(map-get($colors-custom, light), map-get($colors-custom, solid)) {
+    .border-#{$cp}-#{$name} {
+      @if $cp==x {
+        border-left: 1px solid $c !important;
+        border-right: 1px solid $c !important;
+      } @else if $cp==y {
+        border-top: 1px solid $c !important;
+        border-bottom: 1px solid $c !important;
+      } @else {
+        border-#{$cp}: 1px solid $c !important;
+      }
+    }
+  }
+}
+
+@each $cp in $content-positions {
+  @each $name, $c in map-merge(map-get($colors-custom, light), map-get($colors-custom, solid)) {
+    .border-#{$cp}-#{$name}-thin {
+      @if $cp==x {
+        border-left: 1px solid thin $c !important;
+        border-right: 1px solid thin $c !important;
+      } @else if $cp==y {
+        border-top: 1px solid thin $c !important;
+        border-bottom: 1px solid thin $c !important;
+      } @else {
+        border-#{$cp}: 1px solid thin $c !important;
+      }
+    }
+  }
+}
+
+@each $position in $positions {
+  .position-#{$position} {
+    position: $position !important;
+  }
+}
+
+.cell-error {
+  background-color: opacify(map-get($colors-custom, "solid", "red"), 0.7);
+}
+
+@each $name, $c in map-merge(map-get($colors-custom, light), map-get($colors-custom, solid)) {
+  .background-#{$name} {
+    background-color: $c !important;
+  }
+  @for $level from 1 through 9 {
+    .background-#{$name}-lighten-#{$level} {
+      background-color: lighten($c, $level * 10) !important;
+    }
+    .background-#{$name}-darken-#{$level} {
+      background-color: darken($c, $level * 10) !important;
+    }
+  }
+  .text-#{$name} {
+    color: $c !important;
+  }
+}
+
+.bottom-devider-shadow {
+  box-shadow: 0px 10px 20px -24px black;
+}
+.top-devider-shadow {
+  box-shadow: 0px -10px 20px -24px black;
+}
+.right-devider-shadow {
+  box-shadow: 10px 0px 20px -24px black;
+}
+.left-devider-shadow {
+  box-shadow: -10px 0px 20px -24px black;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transprent;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #aaa;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.white-text {
+  color: whitesmoke !important;
+}
+
+.light-text {
+  color: #ffffff48;
+}
+
+.v-btn__content {
+  text-transform: capitalize;
+}
+
+// genral text color
+.v-main {
+  color: $grey-text;
+}
+
+.v-label {
+  font-size: 14px !important;
+}
+
+.card {
+  transition: 0.1s;
+  border-radius: 0 !important;
+  padding: 10px 20px;
+  width: 100%;
+  background-color: white;
+  overflow: hidden;
+  border: 1px solid rgba(128, 128, 128, 0.256);
+
+  &:hover {
+    box-shadow: 2px 2px 10px -5px rgb(0 0 0);
+  }
+}
+
+.selected-card {
+  @extend .border-x-light_blue;
+  @extend .border-y-light_blue;
+  box-shadow: 2px 2px 10px -5px rgb(0 0 0);
+}
+
+.overflow-y-auto {
+  overflow-y: auto !important;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.full-width {
+  width: 100% !important;
+}
+
+.full-height {
+  height: 100% !important;
+}
+
+.cf-icon {
+  font-size: 13px !important;
+}
+
+.cf-card-text {
+  font-size: 15px;
+  color: map-get($colors-custom, "solid", "grey");
+}
+
+@media screen and (max-width: 1376px) {
+  .cf-card-text {
+    font-size: 11px;
+  }
+}
+
+.cf-card-space {
+  padding: 3px 0px !important;
+}
+
+//======| List |=======================================================================================================================
+
+.cf-list-btn {
+  background-color: map-get($colors-custom, "solid", "primary") !important ;
+  color: white !important;
+  border-radius: 0 !important;
+  height: 39px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+  .v-icon {
+    font-size: 17px !important;
+  }
+}
+.cf-list-delete-btn {
+  color: $cfSecondary !important;
+  border-radius: 0 !important;
+  height: 39px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+  .v-icon {
+    font-size: 22px !important;
+  }
+}
+
+//======| table |=======================================================================================================================
+
+.cf-table {
+  .v-btn {
+    font-size: 13px !important;
+    top: -5px;
+    height: 25px !important;
+
+    .v-icon {
+      font-size: 16px !important;
+      margin-right: 10px;
+    }
+  }
+  .cms-view-icon {
+    color: map-get($colors-custom, "solid", "primary") !important;
+    font-size: 25px !important;
+    margin-right: 20px;
+  }
+  .cms-edit-icon {
+    color: map-get($colors-custom, "solid", "primary") !important;
+    font-size: 25px !important;
+    margin-right: 20px;
+  }
+  .cms-delete-icon {
+    color: $cfSecondary !important;
+    font-size: 25px !important;
+    margin-right: 20px;
+  }
+}
+
+.floating-btn-tr {
+  position: absolute !important;
+  z-index: 100 !important;
+  right: -5px !important;
+  top: -5px !important;
+}
+
+.floating-btn-br {
+  position: absolute !important;
+  z-index: 1000 !important;
+  right: 5px !important;
+  bottom: 5px !important;
+}
+
+.pos-rel {
+  position: relative !important;
+}
+
+.cf-zone-map #gmap .gmnoprint > div {
+  float: inherit !important;
+  margin-right: 4px !important;
+  & > button {
+    padding: 13px !important;
+  }
+}
+
+.cf-zone-map .map-delete-icon {
+  position: absolute !important;
+  top: 131px;
+  right: 9px;
+  background-color: white;
+  font-size: 19px !important;
+  padding: 11px 12px 11px 11px;
+  background: none rgb(255, 255, 255);
+  box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px !important;
+  display: block !important;
+}
+
+//Trip Planning
+
+.trip-info-title {
+  font-weight: normal;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+.trip-info-text {
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+.trip-expansion-title {
+  color: white;
+  font-size: 0.9rem !important;
+  line-height: 1.25rem;
+  letter-spacing: 0.0333333333em !important;
+}
+@media screen and (max-width: 1340px) {
+  .trip-expansion-title {
+    font-size: 0.8rem !important;
+  }
+  .trip-expansion-title i {
+    font-size: 20px !important;
+  }
+}
+
+.trip-expansion-body h6 {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase !important;
+  color: map-get($colors-custom, "solid", "primary");
+}
+.trip-expansion-body span {
+  font-size: 14px;
+}
+
+//===== chat ==============
+
+.chat-box .v-input__slot {
+  box-shadow: none !important;
+}
+
+// ==== Vuejs Multipe Select ====
+
+.cf-multipe-select {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.cf-multipe-select .multiselect__tags {
+  border-radius: 4% !important;
+  border: 1px solid #8e99a2 !important;
+}
+.cf-multipe-select .multiselect__tags:focus {
+  color: rgba(0, 0, 0, 0.38) !important;
+  border-color: map-get($colors-custom, "solid", "primary") !important;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: start;
+  appearance: auto;
+  font: 400 13.3333px Arial !important;
+  width: 100%;
+  box-shadow: none !important;
+}
+.multiselect__input,
+.multiselect__single {
+  color: rgba(0, 0, 0, 0.38) !important;
+  border-color: map-get($colors-custom, "solid", "primary") !important;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: start;
+  appearance: auto;
+  font: 400 13.3333px Arial !important;
+  width: 100%;
+  box-shadow: none !important;
+}
+.cf-multipe-select .multiselect__tag {
+  background-color: map-get($colors-custom, "solid", "primary");
+}
+.cf-multipe-select .multiselect__tag .multiselect__tag-icon:after {
+  color: white !important;
+}
+
+.multiselect__tag-icon:focus,
+.multiselect__tag-icon:hover {
+  background: none !important;
+}
+.multiselect__content {
+  left: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%) !important;
+}
+.multiselect__content .multiselect__option {
+  text-rendering: auto;
+  color: -internal-light-dark(black, white);
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  text-align: start;
+  appearance: auto;
+  cursor: text;
+  margin: 0em;
+  font: 400 13.3333px Arial !important;
+}
+
+.multiselect__option--selected {
+  background: map-get($colors-custom, "solid", "primary") !important;
+  color: white !important;
+}
+.multiselect__option--selected.multiselect__option--highlight {
+  background: map-get($colors-custom, "solid", "primary") !important;
+  color: white !important;
+}
+.multiselect__option--highlight {
+  background: map-get($colors-custom, "solid", "primary") !important;
+  color: white !important;
+}
+
+// === Trip Planning ======================================
+
+.cf-trip-expansion .v-expansion-panel-header__icon .v-icon {
+  color: white !important;
+}
+// ==== Right Detail panel CSS ===============================
+.cf-info-title {
+  font-size: 14px;
+}
+
+//=== Order List Card ======================================
+.order-list-checkbox {
+  position: absolute;
+  top: 6px;
+  left: 10px;
+}
+
+@media screen and (max-width: 1300px) {
+  .order-list-checkbox {
+    position: absolute;
+    top: 14px;
+    left: 10px;
+  }
+}
+@media screen and (max-width: 1300px) {
+  .order-list-card-body {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+}
+.card-header-grid {
+  display: grid !important;
+  grid-template-columns: 30px 1fr 1fr !important;
+  padding: 10px 16px !important;
+}
+
+@media screen and (max-width: 1300px) {
+  .card-header-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding-left: 50px !important;
+  }
+}
+
+.text-uppercase {
+  text-transform: uppercase !important;
+}
+
+//opeation inisde overwride css
+.driver-app-expansion .v-expansion-panel-content__wrap {
+  padding: 0px !important;
+}
+.w-100 {
+  width: 100%;
+}
+.H-100 {
+  height: 100%;
+}
+.ba {
+  border: 1px solid #80808069;
+}
+@media screen and (max-width: 768px) {
+  .display-sm-none {
+    display: none !important;
+  }
+}
+@media screen and (min-width: 768px) {
+  .display-md-none {
+    display: none !important;
+  }
+}

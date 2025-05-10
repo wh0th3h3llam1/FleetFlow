@@ -1,0 +1,50 @@
+$content-positions: top, bottom, left, right, x, y;
+
+$positions: absolute, fixed, inherit, initial, relative, revert, static, sticky, unset;
+
+$grey-text: #59595b;
+$cfSecondary: #bd6c6c;
+
+$colors-custom: (
+  solid: (
+    "primary": #5F9EA0, // #9b182f,
+    "black": #3f4040,
+    "blue": #13b6cf,
+    "orange": #f5841f,
+    "green": #147d3e,
+    "pgreen": #42b549,
+    "maroon": #921b1e,
+    "red": #ec2024,
+    "white": #ffffff,
+    "grey": #58595b,
+    "edit": #79C945,
+    "delete": #FC4242,
+    "transparent": transparent,
+    "unassigned" : #607D8B,
+    "assigned" : #2196F3,
+    "pickedup" : #FF8F00,
+    "partially_delivered" : #9C27B0,
+    "failed" : #B71C1C,
+    "cancelled": #880E4F,
+    "successful" : #2E7D32,
+  ),
+  light: (
+    "light_primary": #FFECEF,
+    "light_black": #939598,
+    "light_blue": #41dde5,
+    "light_orange": #fab079,
+    "light_green": #28b260,
+    "light_pgreen": #6cdd6c,
+    "light_maroon": #89CFF0, //#c6283b,
+    "light_red": #f97d9d,
+    "light_subBlue": #17b6cf,
+    "light_grey": #e6e7e8,
+    "light_unassigned" : #90A4AE,
+    "light_assigned" : #90CAF9,
+    "light_pickedup" : #FFB300,
+    "light_partially_delivered" : #CE93D8,
+    "light_failed" : #E53935,
+    "light_cancelled": #F48FB1,
+    "light_successful" : #66BB6A,
+  ),
+);

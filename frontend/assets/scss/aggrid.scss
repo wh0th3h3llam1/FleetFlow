@@ -1,0 +1,36 @@
+@import "./variables.scss";
+@import "~/node_modules/ag-grid-community/src/styles/ag-grid";
+@import "~/node_modules/ag-grid-community/src/styles/ag-theme-material/sass/ag-theme-material-mixin";
+@import "../../node_modules/ag-grid-community/src/styles/ag-theme-material/sass/ag-theme-material-default-params";
+
+.ag-theme-material {
+  $params: map-merge(
+    $ag-theme-material-default-params,
+    (
+      header-background-color: map-get($colors-custom, "light", "light_grey"),
+      secondary-foreground-color: map-get($colors-custom, "solid", "grey"),
+      borders: true,
+    )
+  );
+
+  @include ag-theme-material($params);
+
+  .ag-header-cell-text {
+    font-size: 0.85rem;
+  }
+
+  .ag-root-wrapper {
+    border-top-right-radius: 6px !important;
+    border-top-left-radius: 6px !important;
+  }
+  .ag-paging-panel {
+    color: map-get($colors-custom, "solid", "grey")
+  }
+}
+
+.w-100{
+  width:100%
+}
+.h-100{
+  height: 100%;
+}
