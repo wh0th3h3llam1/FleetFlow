@@ -2,16 +2,16 @@ from common.helpers import no_past_date
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
-from common.constants import VehicleFuelType, VehicleStatus, FieldConstants
 from common.choices import (
     VEHICLE_FUEL_TYPES,
     VEHICLE_STATUS_CHOICES,
     STORAGE_TYPE_CHOICES,
     VEHICLE_DOCUMENT_TYPE_CHOICES,
 )
+from common.constants import VehicleFuelType, VehicleStatus, FieldConstants
 from core.models import BaseModel
-from dms.helpers import get_vehicle_image_path, get_vehicle_documents_path
-from dms.models import Project
+from dms.helpers import get_vehicle_documents_path, get_vehicle_image_path
+from dms.models import Project, Tag
 from users.models import User
 
 
@@ -200,3 +200,15 @@ class VehicleStorage(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.vehicle} - {self.storage_type} - {self.sensor_id}"
+
+
+class VehicleTag(BaseModel):  # through table
+    vehicle = models.ForeignKey(
+        to=Vehicle, on_delete=models.CASCADE, related_name="vehicle_tags", verbose_name="Vehicle"
+    )
+    tag = models.ForeignKey(
+        to=Tag, on_delete=models.CASCADE, related_name="tags_vehicle", verbose_name="Tags"
+    )
+
+    def __str__(self):
+        return f"{self.vehicle.__str__()} - {self.tag.__str__()}"

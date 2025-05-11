@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from common.constants import TagType, VehicleStatus, OrderConstants, VehicleFuelType, TripStatus
 from core.serializers import DynamicFieldsModelSerializer
-from dms.models import Vehicle, VehicleStorage, VehicleDocument, Driver, Tag
+from dms.models import Vehicle, VehicleStorage, VehicleDocument, Tag
 from dms.serializers import ProjectSerializer
 
 logger = logging.getLogger(__name__)
@@ -82,13 +82,13 @@ class VehicleSerializer(DynamicFieldsModelSerializer):
     def validate_tonnage_capacity(self, tonnage_capacity):
         tonnage_capacity = float(tonnage_capacity)
         if tonnage_capacity <= 0.00 or tonnage_capacity > 99.99:
-            raise serializers.ValidationError(f"Tonnage Capacity must be between 0.00 and 99.99 ")
+            raise serializers.ValidationError("Tonnage Capacity must be between 0.00 and 99.99 ")
         return round(tonnage_capacity, 2)
 
     def validate_cbm_capacity(self, cbm_capacity):
         cbm_capacity = float(cbm_capacity)
         if cbm_capacity <= 0.00 or cbm_capacity > 99.99:
-            raise serializers.ValidationError(f"CBM Capacity must be between 0.00 and 99.99 ")
+            raise serializers.ValidationError("CBM Capacity must be between 0.00 and 99.99 ")
         return round(cbm_capacity, 2)
 
     def validate_available_storages(self, storages):
@@ -117,7 +117,7 @@ class VehicleSerializer(DynamicFieldsModelSerializer):
             return ""
 
         vehicle_tags = [tag.strip() for tag in tags.split(",")]
-        tag_list = [
+        _ = [
             Tag.objects.get_or_create(tag=tag, tag_type=TagType.VEHICLE_TAG) for tag in vehicle_tags
         ]
 
