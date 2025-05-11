@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 from common.choices import (
+    DRIVER_DOCUMENT_TYPE_CHOICES,
     SERVICE_TYPE_CHOICES,
     DRIVER_STATUS_CHOICES,
 )
@@ -10,7 +11,7 @@ from common.constants import DriverStatus, ServiceType, FieldConstants
 from common.helpers import no_past_date
 from core.models import BaseModel
 from dms.managers import DriverManager
-from dms.models import Project, Zone, StatusKeyword
+from dms.models import Project, Zone, StatusKeyword, Tag
 from users.models import User
 
 
@@ -250,3 +251,51 @@ class DriverStatusLog(BaseModel):
 
     def __str__(self):
         return f"{self.message} - {self.created.strftime(FieldConstants.DATE_TIME_FORMAT)}"
+
+
+class DriverDocument(BaseModel):
+    FILE_FORMATS = ["pdf", "png", "jpg", "jpeg"]
+
+    driver = models.ForeignKey(
+        Driver, related_name="driver_documents", on_delete=models.CASCADE, verbose_name="Driver"
+    )
+    document_type = models.CharField(
+        choices=DRIVER_DOCUMENT_TYPE_CHOICES,
+        verbose_name="Document Type",
+        blank=True,
+        null=True,
+        max_length=30,
+    )
+    description = models.TextField(blank=True, null=True)
+    document = models.FileField(
+        upload_to=get_driver_documents_path,
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=FILE_FORMATS)],
+        help_text="Supported Formats : {}".format(FILE_FORMATS),
+    )
+    added_by = models.ForeignKey(
+        to=User,
+        related_name="driver_doc_added_by",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        verbose_name_plural = "Driver Documents"
+
+    def __str__(self):
+        return f"{self.document_type} - {self.driver.user.full_name}"
+
+
+class DriverTag(BaseModel):  # through table
+    driver = models.ForeignKey(
+        Driver, on_delete=models.CASCADE, related_name="driver_tags", verbose_name="Driver"
+    )
+    tag = models.ForeignKey(
+        Tag, on_delete=models.CASCADE, related_name="tags_driver", verbose_name="Tags"
+    )
+
+    def __str__(self):
+        return f"{self.driver.__str__()} - {self.tag.__str__()}"
