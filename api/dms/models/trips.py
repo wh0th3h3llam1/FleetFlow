@@ -112,7 +112,8 @@ class Trip(BaseModel, LifecycleModel):
     def trip_id(self):
         return "{}{}".format(self.TRIP_PREFIX, str(self.id).zfill(2))
 
-    def get_trip_pk(self, trip_id) -> int:
+    @staticmethod
+    def get_trip_pk(trip_id) -> int:
         return int(trip_id.replace("TRIP", ""))
 
     def add_order_to_trip(self, order: Order, sequence_number: int):

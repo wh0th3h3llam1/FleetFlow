@@ -12,6 +12,9 @@ from rest_framework import serializers
 from dateutil import tz
 
 from common.constants import (
+    NotificationCategory,
+    NotificationPriority,
+    NotificationType,
     OrderConstants,
     TripStatus,
     TripStatusLogs,
@@ -22,6 +25,10 @@ from common.osrm import OSRMClient
 from core.serializers import DynamicFieldsModelSerializer
 from dms.models import (
     Trip,
+    Notification,
+    ProjectUser,
+    UserNotification,
+    TripChatLog,
     Order,
     Driver,
     TripLog,
@@ -640,3 +647,66 @@ class TripMapRouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = ("id", "reference_number", "driver_route", "trip_info", "route_timestamp")
+
+
+class TripChatLogSerializer(serializers.ModelSerializer):
+    send_by_driver = serializers.BooleanField(read_only=True)
+    message = serializers.CharField(default="")
+
+    class Meta:
+        model = TripChatLog
+        fields = ["message", "attachment", "message_format", "notify", "send_by_driver", "created"]
+        read_only_fields = ["sender", "trip", "driver", "created"]
+
+    def validate(self, attrs):
+        if "attachment" in attrs:
+            attachment = attrs.get("attachment")
+            if attachment:
+                extension = attachment.name.split(".")[-1]
+                if extension in ["jpg", "png", "gif", "jpeg"]:
+                    attrs["message_format"] = "image"
+                elif extension in ["pdf", "doc", "docx", "xls", "xlsx"]:
+                    attrs["message_format"] = "document"
+                elif extension in ["mp3", "wav", "aac"]:
+                    attrs["message_format"] = "audio"
+                elif extension in ["mp4", "wmv", "avi", "mov"]:
+                    attrs["message_format"] = "video"
+            else:
+                attrs["message_format"] = "text"
+        return attrs
+
+    def to_representation(self, instance: TripChatLog):
+        representation = super().to_representation(instance=instance)
+        if instance.attachment:
+            representation["message"] = instance.attachment.url
+        representation["driver"] = instance.driver.user.username
+        representation["trip"] = instance.trip.trip_id if instance.trip else ""
+        representation["sender"] = instance.sender.username if instance.sender else ""
+        representation["created"] = instance.created.timestamp()
+
+        return representation
+
+    def create(self, validated_data):
+        trip = self.context.get("trip")
+        driver = self.context.get("driver")
+        user = self.context.get("request").user
+        validated_data["trip"] = trip
+        validated_data["driver"] = driver
+        validated_data["sender"] = user
+        trip_chat_log = super().create(validated_data)
+        notification = Notification.objects.create(
+            title=f"Driver f{driver.user.full_name} has sent a message",
+            message=trip_chat_log.message,
+            priority=NotificationPriority.LOW,
+            notification_category=NotificationCategory.DRIVER,
+            notification_type=NotificationType.SUCCESS,
+            expiration_time=timezone.now() + timedelta(hours=2),
+        )
+        project_user_to_be_notified = ProjectUser.objects.all().filter(project=driver.project)
+        user_notifications = []
+        for project_user in project_user_to_be_notified:
+            user_notifications.append(
+                UserNotification(user=project_user.user, notification=notification)
+            )
+        UserNotification.objects.bulk_create(user_notifications)
+        return trip_chat_log
