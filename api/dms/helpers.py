@@ -365,7 +365,7 @@ def generate_zone_feature_collections(zones):
 
 
 def file_failed_notification(file_name, added_user):
-    from core.models import UserNotification, Notification, DashUser
+    from core.models import UserNotification, Notification, User
     from lib.constants import NotificationPriority, NotificationType, NotificationCategory
     from datetime import timedelta
     from django.utils import timezone
@@ -378,7 +378,7 @@ def file_failed_notification(file_name, added_user):
         notification_category=NotificationCategory.REPORT,
         expiration_time=timezone.now() + timedelta(days=1),
     )
-    added_by = DashUser.objects.get(id=added_user)
+    added_by = User.objects.get(id=added_user)
     UserNotification.objects.create(user=added_by, notification=notification)
 
 

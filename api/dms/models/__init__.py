@@ -1,5 +1,14 @@
-from .base import PlanningTemplate, Project, ProjectUser, StatusKeyword, Tag, Zone
-from .drivers import Driver, DriverAttendanceLog, DriverStatusLog
+from .base import (
+    PlanningTemplate,
+    Project,
+    ProjectUser,
+    StatusKeyword,
+    Tag,
+    Zone,
+    Notification,
+    UserNotification,
+)
+from .drivers import Driver, DriverAttendanceLog, DriverStatusLog, DriverDocument, DriverTag
 from .orders import (
     CustomerAddress,
     CustomerAddressTimeSlots,
@@ -7,14 +16,16 @@ from .orders import (
     Order,
     OrderItem,
 )
-from .vehicles import Vehicle, VehicleDocument, VehicleStorage
+from .vehicles import Vehicle, VehicleDocument, VehicleStorage, VehicleTag
 
 __all__ = (
+    "Notification",
     "PlanningTemplate",
     "Project",
     "ProjectUser",
     "StatusKeyword",
     "Tag",
+    "UserNotification",
     "Zone",
     "CustomerAddress",
     "CustomerAddressTimeSlots",
@@ -24,7 +35,10 @@ __all__ = (
     "Driver",
     "DriverAttendanceLog",
     "DriverStatusLog",
+    "DriverDocument",
+    "DriverTag",
     "Vehicle",
     "VehicleDocument",
     "VehicleStorage",
+    "VehicleTag",
 )

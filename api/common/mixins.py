@@ -41,3 +41,13 @@ class SerializerCreateUpdateOnlyMixin:
                 kwargs.setdefault(field, {})
                 kwargs[field]["read_only"] = True
         return kwargs
+
+
+class CreateListMixin:
+    """Allows bulk creation of a resource."""
+
+    def get_serializer(self, *args, **kwargs):
+        if isinstance(kwargs.get("data", {}), list):
+            kwargs["many"] = True
+
+        return super().get_serializer(*args, **kwargs)
