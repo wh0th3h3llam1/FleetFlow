@@ -16,6 +16,22 @@ from .orders import (
     Order,
     OrderItem,
 )
+from .report import (
+    DriverStatistics,
+    OrderStatistics,
+    TripStatistics,
+    VehicleStatistics,
+    ReportUtilization,
+)
+from .trips import (
+    Trip,
+    TripChatLog,
+    TripLog,
+    TripMetrics,
+    TripStatusLogs,
+    TripTemperatureFile,
+    TripTemperatureLog,
+)
 from .vehicles import Vehicle, VehicleDocument, VehicleStorage, VehicleTag
 
 __all__ = (
@@ -41,4 +57,16 @@ __all__ = (
     "VehicleDocument",
     "VehicleStorage",
     "VehicleTag",
+    "Trip",
+    "TripChatLog",
+    "TripLog",
+    "TripMetrics",
+    "TripStatusLogs",
+    "TripTemperatureFile",
+    "TripTemperatureLog",
+    "DriverStatistics",
+    "OrderStatistics",
+    "TripStatistics",
+    "VehicleStatistics",
+    "ReportUtilization",
 )
