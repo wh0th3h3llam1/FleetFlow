@@ -1,6 +1,9 @@
 from uuid import uuid4
+
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.forms import ValidationError
+from django.utils import timezone
 
 from common.constants import SystemRoles
 
@@ -25,3 +28,16 @@ def get_profile_image_path(instance, filename, **kwargs) -> str:
     filename = "%s.%s" % (uuid4(), ext)
     file_path = f"users/profile/{instance.username}_{filename}"
     return file_path
+
+
+def get_order_attachment_path(instance, filename, **kwargs):
+    ext = filename.split(".")[-1]
+    filename = "%s.%s" % (uuid4(), ext)
+    file_path = f"order_attachments/{instance.attachment_type}_{filename}"
+    return file_path
+
+
+def no_past_date(value):
+    today = timezone.now().date()
+    if value < today:
+        raise ValidationError("Date cannot be in the past.")
