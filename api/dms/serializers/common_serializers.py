@@ -9,7 +9,17 @@ from rest_framework import serializers
 
 from common.constants import ProjectStatus, SystemRoles
 from core.serializers import DynamicFieldsModelSerializer
-from dms.models import Project, Zone, PlanningTemplate, ProjectUser, Tag
+from dms.helpers import generate_zone_feature_collections
+from dms.models import (
+    Project,
+    Zone,
+    PlanningTemplate,
+    ProjectUser,
+    Tag,
+    StatusKeyword,
+    UserNotification,
+)
+from users.models import User
 
 
 class PlanningTemplateSerializer(DynamicFieldsModelSerializer):
@@ -89,7 +99,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         try:
             planning_template = PlanningTemplate.objects.get(template_name=val)
 
-        except Exception as e:
+        except Exception:
             raise serializers.ValidationError(f"No Template found with {val}")
         return planning_template
 
@@ -160,7 +170,7 @@ class ZoneSerializer(DynamicFieldsModelSerializer):
     def validate_project(self, val):
         try:
             project = self.context.get("all_projects").get(project_id=val)
-        except Exception as e:
+        except Exception:
             raise serializers.ValidationError(f"No project found with project id {val}")
         return project
 
