@@ -3,8 +3,6 @@ import os
 from copy import deepcopy
 
 from django.conf import settings
-import pandas as pd
-import pytz
 from django.db.models import Case, When, BooleanField, Q, F, Sum, Count, Value
 from django.db.models.functions import Concat
 from django.http import HttpResponse, JsonResponse
@@ -17,7 +15,10 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from common.constants import OrderConstants, TripTemperatureFileStatus, FieldConstants, TripStatus
+import pandas as pd
+import pytz
+
+from common.constants import OrderConstants, TripTemperatureFileStatus, FieldConstants
 from common.mixins import CreateListMixin
 from dms.filters import TripFilter
 from dms.models import (
@@ -409,7 +410,7 @@ class TripViewSet(
         time_range_frequency = "1min"
 
         timeline = pd.date_range(trip.trip_start, trip.trip_end, freq=time_range_frequency, tz=None)
-        timeline = timeline.tz_convert(pytz.timezone(TIME_ZONE))
+        timeline = timeline.tz_convert(pytz.timezone(settings.TIME_ZONE))
         timeline = [time.strftime(FieldConstants.FULL_TIME_FORMAT) for time in timeline]
 
         dry = queryset.filter(storage_type=OrderConstants.StorageTypes.DRY)
@@ -474,7 +475,7 @@ class TripViewSet(
 
             return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
 
-        return JsonResponse({"message": f"No Trip id provided"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"message": "No Trip id provided"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TripChatLogViewSet(ListCreateAPIView):

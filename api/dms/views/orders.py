@@ -5,6 +5,7 @@ import os
 from datetime import datetime, timedelta
 from decimal import Decimal
 
+from django.conf import settings
 import django_filters
 from dateutil import parser
 from django.contrib.gis.geos import Point
@@ -1123,7 +1124,7 @@ class OrderViewSet(
 
             total_items_cbm = frozen_items_cbm + chilled_items_cbm + dry_items_cbm
 
-            used_boxes_capacity = Decimal(total_items_cbm) / Decimal(BOX_UNIT)
+            used_boxes_capacity = Decimal(total_items_cbm) / Decimal(settings.BOX_UNIT)
             route_response["boxes"] = f"{math.ceil(used_boxes_capacity)}/{vehicle_box_capacity}"
             route_response["dry_cases"] = dry_case_count
             route_response["chilled_cases"] = chilled_case_count

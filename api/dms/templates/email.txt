@@ -1,0 +1,2 @@
+Dear customer {{customer_name}}, {{message}} Go to Link :
+{{order_url}}

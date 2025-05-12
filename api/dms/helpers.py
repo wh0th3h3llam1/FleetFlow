@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import random
+from smtplib import SMTPAuthenticationError, SMTPConnectError
 import string
 import uuid
 from datetime import datetime, timedelta
@@ -9,8 +10,10 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
+from django.core.mail import send_mail
 from django.db.models import Case, When
 from django.http import HttpResponse
+from django.template.loader import get_template
 from django.utils import timezone
 import pandas as pd
 import xlrd
@@ -632,3 +635,55 @@ def update_order_details(obj, status):
         obj.processing_time = 0
 
     return obj
+
+
+def email_notification(data):
+    """Email Sending Helper Function"""
+    email_list = data.get("receiver_mail", "")
+    customer_name = data.get("customer_name", "")
+    reference_no = data.get("reference_no", "")
+    delivery_date = data.get("delivery_date", "")
+    link = data.get("link")
+
+    subject = f"FleetFlow: Update on your order {reference_no}"
+    message = (
+        f"Your delivery from {customer_name} under order number {reference_no} will be "
+        f"delivered on {delivery_date}. To avoid delays, kindly confirm your delivery location "
+        "by clicking on the below link:"
+    )
+    context = {
+        "customer_name": customer_name,
+        "message": message,
+        "reference_no": reference_no,
+        "delivery_schedule": delivery_date,
+        "order_url": link,
+    }
+
+    try:
+        text = get_template("email.txt")
+        html = get_template("email.html")
+
+        text_content = text.render(context)
+        html_content = html.render(context)
+    except Exception as err:
+        return f"Failure! error while rendering templates:{err}".format(err=err)
+
+    try:
+        send_mail(
+            subject=subject,
+            message=text_content,
+            html_message=html_content,
+            recipient_list=[email_list],
+            from_email=settings.EMAIL_HOST_USER,
+            fail_silently=False,
+        )
+    except SMTPAuthenticationError as smtpautherr:
+        return f"The username and password provided is incorrect: {smtpautherr}".format(
+            smtpautherr=smtpautherr
+        )
+    except SMTPConnectError as smtpconnerr:
+        return f"There is an issue with SMTP server, please try after some time.: {smtpconnerr}".format(
+            smtpconnerr=smtpconnerr
+        )
+    except Exception as err:
+        return f"Failure! error while sending:{err}".format(err=err)
