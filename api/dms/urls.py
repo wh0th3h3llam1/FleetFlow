@@ -75,7 +75,7 @@ router.register("order_reports", OrderReportsViewSet, basename="order-reports")
 router.register("notification", UserNotificationViewSet, basename="user-notifications")
 
 # Dashboard:
-router.register("dashboard", Dashboard, basename="dashboard"),
+router.register("dashboard", Dashboard, basename="dashboard")
 
 
 urlpatterns = [

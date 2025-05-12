@@ -209,6 +209,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
 
+EMAIL_NOTIFICATIONS = env.bool("EMAIL_NOTIFICATIONS", default=False)
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
