@@ -2,28 +2,37 @@ import json
 import logging
 import os
 import random
+from smtplib import SMTPAuthenticationError, SMTPConnectError
 import string
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 
+from django.conf import settings
+from django.contrib.gis.geos import GEOSGeometry
+from django.core.mail import send_mail
+from django.db.models import Case, When
+from django.http import HttpResponse
+from django.template.loader import get_template
+from django.utils import timezone
 import pandas as pd
 import xlrd
 import xlwt
 from dateutil import parser
-from django.conf import settings
-from django.contrib.gis.geos import GEOSGeometry
-from django.db.models import Case, When
-from django.http import HttpResponse
-from django.utils import timezone
+
 
 from common.constants import (
+    VehicleDocumentType,
+    DriverDocumentType,
     TripStatus,
+    NotificationPriority,
+    NotificationType,
+    NotificationCategory,
     SensorReadingLogStatus,
     TripTemperatureFileStatus,
     OrderConstants,
 )
-from common.osrm_helper import OSRMClient
+from common.osrm import OSRMClient
 from common.utils import round_up_in_multiple
 
 logger = logging.getLogger(__name__)
@@ -107,7 +116,7 @@ def get_driver_expense_attachment_path(instance, filename, **kwargs):
     return file_path
 
 
-def get_operations_drivers(user, projects):
+def get_operations_drivers(projects):
     from dms.models import Driver
 
     return (
@@ -182,7 +191,7 @@ def get_trip_temperature_files():
 
 def get_sensor_metadata_readings(file_name):
 
-    df = pd.read_excel(f"{MEDIA_ROOT}{file_name}")
+    df = pd.read_excel(f"{settings.MEDIA_ROOT}{file_name}")
     data_found = False
     sensor_id = None
     found_at = None
@@ -335,7 +344,7 @@ def add_trip_temp_log(kwargs):
 # Delete file once its successfully processed.
 def delete_sensor_file(file_name):
     try:
-        os.remove(f"{MEDIA_ROOT}{file_name}")
+        os.remove(f"{settings.MEDIA_ROOT}{file_name}")
         return True
     except Exception as e:
         logger.exception(e)
@@ -365,10 +374,8 @@ def generate_zone_feature_collections(zones):
 
 
 def file_failed_notification(file_name, added_user):
-    from core.models import UserNotification, Notification, DashUser
-    from lib.constants import NotificationPriority, NotificationType, NotificationCategory
-    from datetime import timedelta
-    from django.utils import timezone
+    from dms.models import UserNotification, Notification
+    from users.models import User
 
     notification = Notification.objects.create(
         title=f"Processing Failed",
@@ -378,13 +385,12 @@ def file_failed_notification(file_name, added_user):
         notification_category=NotificationCategory.REPORT,
         expiration_time=timezone.now() + timedelta(days=1),
     )
-    added_by = DashUser.objects.get(id=added_user)
+    added_by = User.objects.get(id=added_user)
     UserNotification.objects.create(user=added_by, notification=notification)
 
 
 def migrate_documents():
     from dms.models import VehicleDocument, Vehicle, DriverDocument, Driver
-    from lib.constants import VehicleDocumentType, DriverDocumentType
 
     driver_documents = list()
     vehicle_documents = list()
@@ -463,15 +469,15 @@ def migrate_documents():
     if delete_documents:
         for file_name in delete_documents:
             try:
-                if os.path.exists(f"{BASE_DIR}{file_name}"):
-                    os.remove(f"{BASE_DIR}{file_name}")
+                if os.path.exists(f"{settings.BASE_DIR}{file_name}"):
+                    os.remove(f"{settings.BASE_DIR}{file_name}")
             except Exception as e:
                 logger.exception(e)
 
 
-def has_overlap(A_start, A_end, B_start, B_end):
-    latest_start = max(A_start, B_start)
-    earliest_end = min(A_end, B_end)
+def has_overlap(a_start, a_end, b_start, b_end):
+    latest_start = max(a_start, b_start)
+    earliest_end = min(a_end, b_end)
     return latest_start <= earliest_end
 
 
@@ -503,7 +509,6 @@ def get_vehicle_partition(data: dict):
             dry_items_percentage = (Decimal(dry_items_cbm) * 100) / Decimal(vehicle_cbm_capacity)
     except TypeError as te:
         logger.exception(te)
-        pass
 
     total_percentage = dry_items_percentage + chilled_items_percentage + frozen_items_percentage
 
@@ -630,3 +635,55 @@ def update_order_details(obj, status):
         obj.processing_time = 0
 
     return obj
+
+
+def email_notification(data):
+    """Email Sending Helper Function"""
+    email_list = data.get("receiver_mail", "")
+    customer_name = data.get("customer_name", "")
+    reference_no = data.get("reference_no", "")
+    delivery_date = data.get("delivery_date", "")
+    link = data.get("link")
+
+    subject = f"FleetFlow: Update on your order {reference_no}"
+    message = (
+        f"Your delivery from {customer_name} under order number {reference_no} will be "
+        f"delivered on {delivery_date}. To avoid delays, kindly confirm your delivery location "
+        "by clicking on the below link:"
+    )
+    context = {
+        "customer_name": customer_name,
+        "message": message,
+        "reference_no": reference_no,
+        "delivery_schedule": delivery_date,
+        "order_url": link,
+    }
+
+    try:
+        text = get_template("email.txt")
+        html = get_template("email.html")
+
+        text_content = text.render(context)
+        html_content = html.render(context)
+    except Exception as err:
+        return f"Failure! error while rendering templates:{err}".format(err=err)
+
+    try:
+        send_mail(
+            subject=subject,
+            message=text_content,
+            html_message=html_content,
+            recipient_list=[email_list],
+            from_email=settings.EMAIL_HOST_USER,
+            fail_silently=False,
+        )
+    except SMTPAuthenticationError as smtpautherr:
+        return f"The username and password provided is incorrect: {smtpautherr}".format(
+            smtpautherr=smtpautherr
+        )
+    except SMTPConnectError as smtpconnerr:
+        return f"There is an issue with SMTP server, please try after some time.: {smtpconnerr}".format(
+            smtpconnerr=smtpconnerr
+        )
+    except Exception as err:
+        return f"Failure! error while sending:{err}".format(err=err)

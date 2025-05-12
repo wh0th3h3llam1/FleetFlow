@@ -207,7 +207,7 @@ class PermissionModels(Enum):
     TRIP = "trip"
     DRIVER = "driver"
     VEHICLE = "vehicle"
-    DASHUSER = "dashuser"
+    USER = "user"
     PROJECT = "project"
     ZONE = "zone"
     ROLE = "role"

@@ -47,9 +47,20 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "corsheaders",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_gis",
+    "django_extensions",
+    "djoser",
+    "drf_yasg",
+    "django_filters",
+    "django_json_widget",
+    "django_celery_beat",
+    "django_celery_results",
+    "channels",
 ]
 
-LOCAL_APPS = ["core", "users"]
+LOCAL_APPS = ["core", "dms", "users"]
 
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -180,3 +191,32 @@ REST_FRAMEWORK = {
 
 
 DJOSER = {"SERIALIZERS": {"token": "core.serializers.TokenSerializer"}}
+
+
+### Celery Configuration
+CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", default="redis://127.0.0.1:6379")
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+EMAIL_HOST = env.str("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
+
+BOX_UNIT = env.str("BOX_UNIT", 0.05)

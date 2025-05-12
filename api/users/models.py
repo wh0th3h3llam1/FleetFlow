@@ -80,3 +80,7 @@ class User(BaseModel, AbstractUser):
     @property
     def full_name(self):
         return f"{self.first_name} - {self.last_name}"
+
+    @cached_property
+    def projects_with_access(self):
+        return list(self.user_projects.values_list("project__project_id", flat=True))

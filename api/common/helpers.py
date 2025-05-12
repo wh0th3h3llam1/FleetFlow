@@ -41,3 +41,9 @@ def no_past_date(value):
     today = timezone.now().date()
     if value < today:
         raise ValidationError("Date cannot be in the past.")
+
+
+def file_size(value):  # add this to some file where you can import it from
+    limit = 5 * 1024 * 1024
+    if value.size > limit:
+        raise ValidationError("File too large. Size should not exceed 5 MiB.")
