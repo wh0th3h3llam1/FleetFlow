@@ -31,6 +31,8 @@ from .trips import (
     TripStatusLogs,
     TripTemperatureFile,
     TripTemperatureLog,
+    DriverBreak,
+    DriverExpense,
 )
 from .vehicles import Vehicle, VehicleDocument, VehicleStorage, VehicleTag
 
@@ -64,6 +66,8 @@ __all__ = (
     "TripStatusLogs",
     "TripTemperatureFile",
     "TripTemperatureLog",
+    "DriverBreak",
+    "DriverExpense",
     "DriverStatistics",
     "OrderStatistics",
     "TripStatistics",
