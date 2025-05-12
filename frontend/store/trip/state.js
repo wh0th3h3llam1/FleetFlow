@@ -1,0 +1,50 @@
+export default () => ({
+    Trips: [],
+    tripTotalCount: null,
+    currentTrip: {},
+    dryTempratureData: null,
+    frozenTempratureData: null,
+    chilledTempratureData: null,
+    actualroute : null,
+    loaditemlist: {
+        chilled_item_list: [],
+        dry_item_list: [],
+        frozen_item_list: [],
+        total_items: null,
+        driver_name: null,
+        total_order: null,
+        vehicle_no: null,
+        vehicle_type: null,
+        trip_reference_number: null,
+        trip_statistics: {
+            tonnage_utilization: null,
+            total_items: null,
+            volume_utilization: null,
+        },
+        usage: {
+            total_cbm: null,
+            total_quantity: null,
+            total_weight: null,
+        },
+    },
+    tripitemlist: {
+        orders: [],
+        order_items: [],
+        partitions: {
+            chilled: null,
+            dry: null,
+            frozen: null,
+            unused: null,
+        },
+        trip_details: {
+            driver: null,
+            driver_id: null,
+            driver_number: null,
+            reference_number: null,
+            trip_date: null,
+            vehicle: null,
+            vehicle_make: null,
+            vehicle_model: null,
+        }
+    },
+})
