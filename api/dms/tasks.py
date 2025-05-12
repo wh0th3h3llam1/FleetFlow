@@ -12,9 +12,9 @@ from common.constants import (
     OrderConstants,
     CustomerNotificationStatus,
     SensorReadingLogStatus,
+    TripStatus,
     TripTemperatureFileStatus,
 )
-
 from common.utils import manage_start_end_date
 from dms import helpers, models
 from dms.reports.generate_statistics import (
@@ -69,7 +69,7 @@ def send_notification(data):
                     and settings.EMAIL_NOTIFICATION
                     and order.customer_address.email_notification
                 ):
-                    email_notification(data)
+                    helpers.email_notification(data)
     else:
         order_id = data
         order = models.Order.objects.get(id=order_id)
@@ -200,7 +200,6 @@ def calculate_eta():
     """Background task to update estimated time of order for trip"""
 
     from dms.models import Trip
-    from common.constants import TripStatus, OrderConstants
 
     list_of_trips = list()
     list_of_orders = list()
@@ -288,6 +287,7 @@ def orders_bulk_create(payload_id: int):
         bulk_upload_file = models.OrderUploadFile.objects.get(id=payload_id)
     except models.OrderUploadFile.DoesNotExist as e:
         logger.exception(e)
+        return {"msg": "No Files to process"}
     else:
         order_data = OrderSerializer(
             data=list(bulk_upload_file.payload.values()),
@@ -314,7 +314,6 @@ def orders_bulk_create(payload_id: int):
             order_list = []
             for order_instance in orders:
                 order_list.append(order_instance.id)
-            # bulk_upload_notification.apply_async(args=[json.dumps(order_list)])
             send_notification.apply_async(args=[json.dumps(order_list)])
             bulk_upload_file.is_completed = True
             bulk_upload_file.save()
