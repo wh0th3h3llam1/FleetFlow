@@ -14,6 +14,7 @@ djangorestframework==3.15.2
 djangorestframework_simplejwt==5.5.0
 djoser==2.3.1
 drf-extra-fields==3.7.0
+drf-nested-routers==0.94.1
 numpy==2.2.5
 osrm-py==0.11.3
 pandas==2.2.3
