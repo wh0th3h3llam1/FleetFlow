@@ -5,7 +5,7 @@ export default () => ({
   planId: null,
   planDetails: {
     plan_name: "Plan 1",
-    project_name: "Chef ME",
+    project_name: "Fleet Flow",
     project: "PRJ0007",
   },
   tripList: [],

@@ -11,7 +11,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: "Chef Me",
+    titleTemplate: "Fleet Flow",
     title: "chefme",
     htmlAttrs: {
       lang: "en",
@@ -65,7 +65,8 @@ export default {
   axios: {
     // baseURL: "https://uat.chefme.fero.ai/"
     // baseURL: "http://127.0.0.1:8000/"
-    baseURL: "http://3.17.173.193/"
+    // baseURL: "http://3.17.173.193/"
+    baseURL: "https://fleetflow.aarsheth.com/"
   },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {

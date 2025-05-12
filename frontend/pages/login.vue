@@ -101,7 +101,7 @@
 import bgColor from "@/static/landing.jpg";
 import bgRotationImage from "@/static/bglogin.jpg";
 import whiteLogo from "@/static/logo_bold.png";
-import RedLogo from "@/static/logo.png";
+import RedLogo from "@/static/header_logo.png";
 import { makeInstance, encryptLocal } from "~/assets/js/encryptLocal";
 
 export default {
