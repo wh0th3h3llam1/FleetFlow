@@ -1,6 +1,5 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from rest_framework_nested import routers
 
 from .views import operations as operations_views
 from .views.common import (
@@ -11,6 +10,7 @@ from .views.common import (
     UserNotificationViewSet,
     TagViewSet,
 )
+from .views.dashboard import Dashboard
 from .views.drivers import DriverViewSet, DriverDocumentViewSet
 from .views.orders import (
     BulkUploadB2COrderView,
@@ -33,7 +33,7 @@ from .views.reports import (
 )
 from .views.roles import RoleViewSet
 from .views.trips import TripViewSet, TripOrdersViewSet
-from .views.users import DashUserViewSet
+from .views.users import UserViewSet
 from .views.vehicles import VehicleViewSet, VehicleDocumentViewSet
 
 from .reports.views import ReportsViewSet
@@ -62,7 +62,9 @@ router.register("zones", ZoneViewset, basename="zones")
 router.register("filter_trip_orders", TripOrdersViewSet, basename="filter_trip_orders")
 
 router.register("role", RoleViewSet, basename="role")
-router.register("user", DashUserViewSet, basename="user")
+router.register("user", UserViewSet, basename="user")
+
+router.register("planning_template", PlanningTemplateViewSet, basename="planning_template")
 
 # Report Urls:
 router.register("reports", ReportsViewSet, basename="reports")
@@ -71,6 +73,9 @@ router.register("vehicle_reports", VehicleReportsViewSet, basename="vehicle-repo
 router.register("driver_reports", DriverReportsViewSet, basename="driver-reports")
 router.register("order_reports", OrderReportsViewSet, basename="order-reports")
 router.register("notification", UserNotificationViewSet, basename="user-notifications")
+
+# Dashboard:
+router.register("dashboard", Dashboard, basename="dashboard"),
 
 
 urlpatterns = [
